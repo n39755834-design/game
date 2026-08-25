@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tic Tac Toe - 0 X Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        #status {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .cell {
+            background: #f0f0f0;
+            border: none;
+            border-radius: 10px;
+            font-size: 48px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.2s;
+        }
+
+        .cell:hover {
+            background: #ddd;
+            transform: scale(1.05);
+        }
+
+        .cell.X {
+            color: #e74c3c;
+        }
+
+        .cell.O {
+            color: #3498db;
+        }
+
+        button.reset {
+            padding: 10px 25px;
+            font-size: 16px;
+            background: #764ba2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button.reset:hover {
+            background: #5a3a80;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>🎮 Tic Tac Toe</h1>
+        <div id="status">Player X की बारी</div>
+        <div class="board" id="board"></div>
+        <button class="reset" onclick="resetGame()">🔄 फिर से शुरू करें</button>
+    </div>
+
+    <script>
+        let board = ["", "", "", "", "", "", "", "", ""];
+        let currentPlayer = "X";
+        let gameActive = true;
+
+        const boardEl = document.getElementById("board");
+        const statusEl = document.getElementById("status");
+
+        const winPatterns = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
+
+        function renderBoard() {
+            boardEl.innerHTML = "";
+            board.forEach((cell, index) => {
+                const cellEl = document.createElement("button");
+                cellEl.classList.add("cell");
+                if (cell) cellEl.classList.add(cell);
+                cellEl.textContent = cell;
+                cellEl.addEventListener("click", () => handleClick(index));
+                boardEl.appendChild(cellEl);
+            });
+        }
+
+        function handleClick(index) {
+            if (board[index] !== "" || !gameActive) return;
+
+            board[index] = currentPlayer;
+            renderBoard();
+            checkResult();
+        }
+
+        function checkResult() {
+            let roundWon = false;
+
+            for (let pattern of winPatterns) {
+                const [a, b, c] = pattern;
+                if (board[a] && board[a] === board[b] && board[b] === board[c]) {
+                    roundWon = true;
+                    break;
+                }
+            }
+
+            if (roundWon) {
+                statusEl.textContent = `🎉 Player ${currentPlayer} जीत गया!`;
+                gameActive = false;
+                return;
+            }
+
+            if (!board.includes("")) {
+                statusEl.textContent = "🤝 मैच ड्रॉ हो गया!";
+                gameActive = false;
+                return;
+            }
+
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            statusEl.textContent = `Player ${currentPlayer} की बारी`;
+        }
+
+        function resetGame() {
+            board = ["", "", "", "", "", "", "", "", ""];
+            currentPlayer = "X";
+            gameActive = true;
+            statusEl.textContent = "Player X की बारी";
+            renderBoard();
+        }
+
+        renderBoard();
+    </script>
+
+</body>
+
+</html>
